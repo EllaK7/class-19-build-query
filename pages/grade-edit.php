@@ -27,7 +27,10 @@ $record_id = ($_GET["record"] == "" ? NULL : (int)$_GET["record"]); // untrusted
 if ($record_id) {
   $records = exec_sql_query(
     $db,
-    "TODO: 9. query the grades record with id = $record_id"
+    "SELECT * FROM grades WHERE (id = :id);",
+    array(
+      ":id" => $record_id
+    )
   )->fetchAll();
 
   // Did we find the record?
