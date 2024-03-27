@@ -81,20 +81,29 @@ $sort_param = $_GET["sort"] ?? NULL; // untrusted
 $order_param = $_GET["order"] ?? NULL; // untrusted
 
 // SQL query parts
-$sql_select_clause = "TODO: 1. select clause";
-$sql_order_clause = "TODO: 2. default order clause"; // no default order
+// 1. select clause
+// 2. default order clause
+$sql_select_clause = "SELECT
+  grades.id AS 'grades.id',
+  courses.number AS 'courses.number',
+  courses.credits AS 'courses.credits',
+  grades.term AS 'grades.term',
+  grades.acad_year AS 'grades.acad_year',
+  grades.grade AS 'grades.grade'
+FROM grades INNER JOIN courses ON (grades.course_id = courses.id)";
+$sql_order_clause = ""; // no default order
 
 // validate sort's order parameter
 // order must be: asc or desc
 if ($order_param == "asc") {
-  // ascending
-  $sql_sort_order = "TODO: 5. sort order (asc)";
+  // ascending 5. sort order (asc)
+  $sql_sort_order = "ASC";
 
   $order_next = "desc";
   $filter_icon = "up";
 } else if ($order_param == "desc") {
-  // descending
-  $sql_sort_order = "TODO: 6. sort order (desc)";
+  // descending 6. sort order (desc)
+  $sql_sort_order = "DESC";
 
   $order_next = NULL;
   $filter_icon = "down";
@@ -128,7 +137,7 @@ if ($sql_sort_order && in_array($sort_param, array("course", "term", "year", "cr
   // SQL sort by field
   // map query string values to database fields
   $sql_sort_fields = array(
-    "course" => "TODO: 7. field for course number",
+    "course" => "courses.number",
     "term" => "grades.term",
     "year" => "grades.acad_year",
     "credits" => "courses.credits",
@@ -136,8 +145,8 @@ if ($sql_sort_order && in_array($sort_param, array("course", "term", "year", "cr
   );
   $sql_sort_field = $sql_sort_fields[$sort_param];
 
-  // order by SQL clause
-  $sql_order_clause = "TODO: 8. order by clause (sort by field ($sql_sort_field) in order ($sql_sort_order)";
+  // order by SQL clause 8. order by clause (sort by field ($sql_sort_field) in order ($sql_sort_order)
+  $sql_order_clause = "ORDER BY" . " " . $sql_sort_field . " " . $sql_sort_order;
 } else {
   // sort params are invalid
   $sort_param = NULL;
@@ -146,18 +155,12 @@ if ($sql_sort_order && in_array($sort_param, array("course", "term", "year", "cr
 
 // build the final query
 // glue the select clause to the order clause
-$sql_select_query = "TODO: 3. glue select clause to order clause";
+// 3. glue select clause to order clause
+$sql_select_query = $sql_select_clause . $sql_order_clause . ";" ;
 
 // query grades table
-// TODO: 4. query database using the assembled/built query ($sql_select_query)
-$records = exec_sql_query($db, "SELECT
-  grades.id AS 'grades.id',
-  courses.number AS 'courses.number',
-  courses.credits AS 'courses.credits',
-  grades.term AS 'grades.term',
-  grades.acad_year AS 'grades.acad_year',
-  grades.grade AS 'grades.grade'
-FROM grades INNER JOIN courses ON (grades.course_id = courses.id)")->fetchAll();
+// 4. query database using the assembled/built query ($sql_select_query)
+$records = exec_sql_query($db, $sql_select_query)->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
